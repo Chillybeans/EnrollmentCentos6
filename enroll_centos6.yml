@@ -6,6 +6,31 @@
   remote_user: root
 
   tasks:
+    - name: create tmp directory
+      shell: /bin/bash -c "mkdir /mnt/tmp"
+      ignore_errors: yes
+
+    - name: mount groups share
+      shell: /bin/bash -c "mount -t cifs //g-star.raw/data/install -o username=_svc_compadd,domain=G-STAR.RAW,password=R@wadd00 /mnt/tmp"
+     
+    - name:  copy VMWARE Tools Installation
+      shell: /bin/bash -c "cd /mnt/tmp/Server/Linux"
+      
+    - name: create /tmp 
+      shell: /bin/bash -c "mkdir /tmp"
+      ignore_errors: yes
+      
+    - name: copy VMWare Tools Installation
+      shell: /bin/bash -c "cp /mnt/tmp/Server/Linux/VMwareTools-9.0.15-2323214.tar.gz /tmp"
+      ignore_errors: yes
+      
+    - name: untar and run
+      shell: /bin/bash -c "tar -zxvf /tmp/VMwareTools-9.0.15-2323214.tar.gz -C /tmp/"
+      ignore_errors: yes
+    
+    - name: run the vmware installer
+      shell: /bin/bash -c "/tmp/vmware-tools-distrib/vmware-install.pl -d default"
+      
     - name: installs tools needed for joining domain
       yum: name={{ item }} state=installed
       with_items:
@@ -59,7 +84,7 @@
         
     - name: Update PAM systemauth
       shell: |
-        echo "#%PAM-1.0 
+        echo '#%PAM-1.0 
         # This file is auto-generated. 
         # User changes will be destroyed the next time authconfig is run. 
         auth required pam_env.so 
@@ -91,4 +116,4 @@
         session [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid 
         session required pam_unix.so 
         session optional pam_krb5.so 
-        " > /etc/pam.d/system-auth
+        ' > /etc/pam.d/system-auth
