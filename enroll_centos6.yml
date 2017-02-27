@@ -36,9 +36,10 @@
       shell: echo "%rdp-$HOSTNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
       
     - name: Update PAM sshd files
-      shell: echo >
-        "#%PAM-1.0
+      shell: >
+        echo "#%PAM-1.0
         auth       required     pam_sepermit.so
         auth       required     pam_sepermit.so
-        auth       sufficient   pam_winbind.so" > /etc/pam.d/sshd
+        auth       sufficient   pam_winbind.so"
+        > /etc/pam.d/sshd
         
