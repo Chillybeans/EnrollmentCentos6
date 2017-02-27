@@ -25,9 +25,12 @@
     
     - name: mkdir /home/g-star.raw
       shell: mkdir /home/g-star.raw
+      ignore_errors: yes
       
     - name: change permissions on the folder
       shell: chmod 777 /home/g-star.raw
+      ignore_errors: yes
+      
       
     - name: add group to sudoers 
       shell: echo "%rdp-$HOSTNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
