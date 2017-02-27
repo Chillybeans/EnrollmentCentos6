@@ -1,0 +1,34 @@
+---
+## This playbook installs and configures AD authentication
+
+- name: Install and configure AD authentication
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: installs tools needed for joining domain
+      yum: pkg={{ item }} state = installed
+      with_items:
+        - authconfig
+        - krb5-workstation
+        - pam_krb5
+        - samba-common
+        - oddjob-mkhomedir
+        - ntp
+        - sudo
+        
+    - name: run authconfig and set up the required settings and files
+      shell: /bin/bash -c "authconfig --disablecache --enablewinbind --enablewinbindauth --smbsecurity=ads --smbworkgroup=GSTARRAW --smbrealm=G-STAR.RAW --enablewinbindusedefaultdomain --winbindtemplatehomedir=/home/G-STAR.RAW/%U --winbindtemplateshell=/bin/bash --enablekrb5 --krb5realm=G-STAR.RAW --enablekrb5kdcdns --enablekrb5realmdns --enablelocauthorize --enablemkhomedir --enablepamaccess --updateall"
+      
+    - name: join domain
+      shell: /bin/bash -c "net ads join g-star.raw -U _svc_compadd%R@wadd00"
+    
+    - name: mkdir /home/g-star.raw
+      shell: mkdir /home/g-star.raw
+      
+    - name: change permissions on the folder
+      shell: chmod 777 /home/g-star.raw
+      
+    - name: add group to sudoers 
+      shell: echo "%rdp-$HOSTNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+      
