@@ -32,3 +32,5 @@
     - name: add group to sudoers 
       shell: echo "%rdp-$HOSTNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
       
+    - name: Update PAM sshd files
+      shell: echo "#%PAM-1.0 \n auth       required     pam_sepermit.so \n"
